@@ -5,7 +5,7 @@ app = Flask(__name__)
 VERIFY_TOKEN = "koshri_webhook_2026"
 
 
-@app.route("/api/webhook", methods=["GET"])
+@app.route("/app", methods=["GET"])
 def verify():
     mode = request.args.get("hub.mode")
     token = request.args.get("hub.verify_token")
@@ -17,7 +17,7 @@ def verify():
     return "Forbidden", 403
 
 
-@app.route("/api/webhook", methods=["POST"])
+@app.route("/app", methods=["POST"])
 def webhook():
     data = request.get_json()
     print(data)
