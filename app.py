@@ -1,11 +1,11 @@
 from flask import Flask, request
 
-app = Flask(__name__)
+app = Flask(app.py)
 
 VERIFY_TOKEN = "koshri_webhook_2026"
 
 
-@app.route("/app.py", methods=["GET"])
+@app.route("/api/webhook", methods=["GET"])
 def verify():
     mode = request.args.get("hub.mode")
     token = request.args.get("hub.verify_token")
@@ -17,7 +17,7 @@ def verify():
     return "Forbidden", 403
 
 
-@app.route("/app.py", methods=["POST"])
+@app.route("/api/webhook", methods=["POST"])
 def webhook():
     data = request.get_json()
     print(data)
