@@ -1,6 +1,6 @@
 from flask import Flask, request
 
-app = Flask(app.py)
+app = Flask(__name__)
 
 VERIFY_TOKEN = "koshri_webhook_2026"
 
