@@ -21,4 +21,5 @@ def verify():
 def webhook():
     data = request.get_json()
     print(data)
+
     return "OK", 200
