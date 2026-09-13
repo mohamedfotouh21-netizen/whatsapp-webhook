@@ -22,57 +22,59 @@ def verify():
 
 @app.route("/api/webhook", methods=["POST"])
 def webhook():
-    data = request.get_json()
+    data = request.get_json(silent=True)
+
+    print("\n================ WEBHOOK EVENT ================")
+    print(json.dumps(data, indent=4, ensure_ascii=False))
+    print("================================================\n")
 
     try:
-        value = data["entry"][0]["changes"][0]["value"]
+        entry = data.get("entry", [])
 
-        messages = value.get("messages", [])
+        for entry_item in entry:
+            changes = entry_item.get("changes", [])
 
-        if not messages:
-            return "OK", 200
+            for change in changes:
+                value = change.get("value", {})
 
-        message = messages[0]
+                # =========================
+                # Incoming messages
+                # =========================
+                messages = value.get("messages", [])
 
-        # نتعامل حاليًا مع الرسائل النصية فقط
-        if message.get("type") != "text":
-            return "OK", 200
+                if messages:
+                    print(">>> INCOMING MESSAGE")
 
-        customer_number = message["from"]
-        message_text = message["text"]["body"]
+                    for message in messages:
+                        print("Message ID:", message.get("id"))
+                        print("From:", message.get("from"))
+                        print("Type:", message.get("type"))
 
-        phone_number_id = value["metadata"]["phone_number_id"]
+                # =========================
+                # Outgoing message statuses
+                # =========================
+                statuses = value.get("statuses", [])
 
-        # الرد
-        reply_text = f"أهلاً بك 👋 وصلت رسالتك: {message_text}"
+                if statuses:
+                    print(">>> WHATSAPP MESSAGE STATUS")
 
-        url = f"https://graph.facebook.com/v26.0/{phone_number_id}/messages"
+                    for status in statuses:
+                        print("Message ID:", status.get("id"))
+                        print("Status:", status.get("status"))
+                        print("Recipient:", status.get("recipient_id"))
+                        print("Timestamp:", status.get("timestamp"))
 
-        headers = {
-            "Authorization": f"Bearer {WHATSAPP_ACCESS_TOKEN}",
-            "Content-Type": "application/json"
-        }
-
-        payload = {
-            "messaging_product": "whatsapp",
-            "to": customer_number,
-            "type": "text",
-            "text": {
-                "body": reply_text
-            }
-        }
-
-        response = requests.post(
-            url,
-            headers=headers,
-            json=payload,
-            timeout=10
-        )
-
-        print("WhatsApp API status:", response.status_code)
-        print("WhatsApp API response:", response.text)
+                        if status.get("errors"):
+                            print("ERRORS:")
+                            print(
+                                json.dumps(
+                                    status.get("errors"),
+                                    indent=4,
+                                    ensure_ascii=False
+                                )
+                            )
 
     except Exception as e:
-        print("Webhook error:", str(e))
+        print("Webhook processing error:", str(e))
 
     return "OK", 200
