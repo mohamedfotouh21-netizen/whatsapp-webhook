@@ -41,9 +41,9 @@ def webhook():
         customer_number = message["from"]
         message_text = message["text"]["body"]
 
-        # رقم WhatsApp Business الذي استقبل الرسالة
         phone_number_id = value["metadata"]["phone_number_id"]
 
+        # الرد
         reply_text = f"أهلاً بك 👋 وصلت رسالتك: {message_text}"
 
         url = f"https://graph.facebook.com/v26.0/{phone_number_id}/messages"
