@@ -46,7 +46,7 @@ def webhook():
 
         reply_text = f"أهلاً بك 👋 وصلت رسالتك: {message_text}"
 
-        url = f"https://graph.facebook.com/vXX.X/{phone_number_id}/messages"
+        url = f"https://graph.facebook.com/v26.0/{phone_number_id}/messages"
 
         headers = {
             "Authorization": f"Bearer {WHATSAPP_ACCESS_TOKEN}",
